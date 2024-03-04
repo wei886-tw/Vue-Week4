@@ -13,6 +13,7 @@ const app = createApp({
       tempProduct: {
         imageUrl: [],
         imagesUrl: [],
+        is_enabled: 0,
       },
       pages: {},
     };
@@ -31,24 +32,26 @@ const app = createApp({
           imagesUrl: [],
         };
         this.isNew = true;
-        this.$refs.pModal.openModal()
-        }
+        this.$refs.pModal.openModal();
+      }
 
       else if (status === 'edit') {
         this.tempProduct = { ...product };
+        this.tempProduct.imagesUrl = [];
         this.new = false;
-        this.$refs.pModal.openModal()
+        this.$refs.pModal.openModal();
       }
 
       else if (status === 'delete') {
         this.tempProduct = { ...product };
-        this.$refs.dModal.openModal()
+        this.$refs.dModal.openModal();
       }
     },
     getProducts(page = 1) {
       axios.get(`${this.url}/v2/api/${this.api_path}/admin/products?page=${page}`)
         .then(res => {
           this.allProducts = res.data.products;
+          console.log(this.allProducts)
           this.pages = res.data.pagination;
         })
 
@@ -60,7 +63,7 @@ const app = createApp({
     delProduct() {
       axios.delete(`${this.url}/v2/api/${this.api_path}/admin/product/${this.tempProduct.id}`)
         .then(res => {
-          this.$refs.dModal.closeModal()
+          this.$refs.dModal.closeModal();
           this.getProducts();
         })
         .catch(err => {
@@ -72,12 +75,12 @@ const app = createApp({
       if (this.isNew == true) {
         axios.post(`${this.url}/v2/api/${this.api_path}/admin/product`, { data: this.tempProduct })
           .then(res => {
-            this.$refs.pModal.closeModal()
+            
+            this.$refs.pModal.closeModal();
             alert("新增產品成功");
             this.isNew = false;
             this.tempProduct = {};
             this.getProducts();
-
           })
           .catch(err => {
             alert(err.data.message);
@@ -86,7 +89,7 @@ const app = createApp({
       else if (this.isNew == false) {
         axios.put(`${this.url}/v2/api/${this.api_path}/admin/product/${this.tempProduct.id}`, { data: this.tempProduct })
           .then(res => {
-            this.$refs.pModal.closeModal()
+            this.$refs.pModal.closeModal();
             alert("編輯產品成功");
             this.getProducts();
             this.tempProduct = {};
